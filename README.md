@@ -40,13 +40,14 @@ Code to support the Udemy course [React Query: Server State Management in React]
 
     -   In our blog example, our react query was getting the comments from the first blog post, caching them, and then returning those same comments for every blog post
     -   A good way to solve this is to make a react query for each blog post, **where the key is an array** with the blog post id
-        -   **const { data } = useQuery( [ 'comments', post.id ] , () => fetchComments( post.id ) );**
+        -   **const { data } = useQuery( [ 'comments', post.id ] , ( ) => fetchComments( post.id ) );**
         -   this allows us to cache the comments for each blog post and avoid re-fetching or overwriting previous queries
         -   sometimes this is described as a query's **"dependency array"**
 
 -   ### Pagination w/ React Query
     -   Track current page in component state (`currentPage`)
     -   Use query keys that include the page number `["posts", currentPage]`
+    -   **const { data } = useQuery( [ "posts", currentPage ] , ( ) => fetchPosts2( currentPage ) );**
     -   User clicks "next page" or "previous page" button
         -   update `currentPage` state
         -   fire off new react query to load appropriate blog results
