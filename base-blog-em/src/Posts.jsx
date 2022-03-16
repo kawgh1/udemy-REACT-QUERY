@@ -20,7 +20,7 @@ const fetchPosts2 = async () => {
         );
         return response.data;
     } catch (error) {
-        return error;
+        console.log(error);
     }
 };
 
@@ -33,7 +33,9 @@ export function Posts() {
     // useQuery takes a user supplied key name, "posts", and an async function that returns the data as a promise
     // the base react query has a bunch of properties we can destructure off of and use in our code
     // like isError and isLoading
-    const { data, isError, error, isLoading } = useQuery("posts", fetchPosts2);
+    const { data, isError, error, isLoading } = useQuery("posts", fetchPosts2, {
+        staleTime: 2000,
+    });
     if (isLoading) return <h3>Loading...</h3>;
     if (isError)
         return (
