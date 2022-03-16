@@ -38,6 +38,7 @@ Code to support the Udemy course [React Query: Server State Management in React]
 
 -   ### Using an Array as the Query Key
     -   In our blog example, our react query was getting the comments from the first blog post, caching them, and then returning those same comments for every blog post
-    -   A good way to solve this is to make a react query for each blog post, where the key is an array with the blog post id
+    -   A good way to solve this is to make a react query for each blog post, where the **key** is an array with the blog post id
         -   **const { data } = useQuery( [ 'comments', post.id ] , () => fetchComments( post.id ) );**
         -   this allows us to cache the comments for each blog post and avoid re-fetching or overwriting previous queries
+        -   sometimes this is described as a query's "dependency array"
