@@ -122,6 +122,8 @@ Code to support the Udemy course [React Query: Server State Management in React]
 
 -   ### Infinite Scroll
 
+    **API - https://swapi.dev/api/people/ https://swapi.dev/api/species/**
+
     -   fetch new data "just in time" as user scrolls
     -   more efficient than fetching all data or images at once
         -   imagine trying to fetch all your twitter data
