@@ -190,7 +190,7 @@ Code to support the Udemy course [React Query: Server State Management in React]
                 return response.data;
             };
 
-            export function InfinitePeople() {
+            export const InfinitePeople = () => {
                 // TODO: get data for InfiniteScroll via React Query
 
                 const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
