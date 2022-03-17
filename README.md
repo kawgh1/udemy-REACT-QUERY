@@ -119,3 +119,62 @@ Code to support the Udemy course [React Query: Server State Management in React]
                     <button onClick={( ) => updateMutation.mutate( post.id ) }>
                         Update title
                     </button>
+
+-   ### Infinite Scroll
+
+    -   fetch new data "just in time" as user scrolls
+    -   more efficient than fetching all data or images at once
+        -   imagine trying to fetch all your twitter data
+    -   Fetch new data when...
+
+        -   user clicks a button
+        -   user scrolls to a certain point on the page
+        -   uses hook `useInfiniteQuery`
+            -   requires different API format than pagination
+                -   So for pagination, we were tracking the `currentPage` in the component state and when the user clicked on a `button` for a `new page`, we updated the state, which updated the `query key` which updated the data
+        -   `useInfiniteQuery` actually tracks what our next query will be
+
+            -   next query is returned inside "results" as part of the returned data
+
+                    {
+                        "count": 37,
+                        "next": "http://swapi.dev/api/species/?page=2",
+                        "previous": null,
+                        "results": [...]
+
+                    }
+
+-   ### `useInfiniteQuery`
+
+    -   Shape of data is different than `useQuery`
+    -   Object with two properties:
+        -   `pages`
+        -   `pageParams` - rarely used, not used here
+    -   Every query has its own element in the `pages` array
+    -   `pageParams` tracks the keys of queries that have been retrieved
+    -   **useInfiniteQuery( "sw-people", ( { pageParam = defaultUrl } ) => fetchUrl( pageParam ) )**
+        -   Current value of `pageParam` is maintained by React Query, not part of component state
+    -   `useInfiniteQuery` options:
+        -   `getNextPageParam: ( lastPage, allPages )`
+            -   Updates `pageParam`
+            -   Might use all of the pages of data, might not (`allPages`)
+            -   we will use just the `lastPage` of data (specifically the `next` property)
+    -   ### Properties of the `useInfiniteQuery` return object
+        -   `fetchNextPage`
+            -   function to call when the user needs more data
+        -   `hasNextPage`
+            -   Based on return value of `getNextPageParam`
+            -   if `undefined`, no more data to return
+        -   `isFetchingNextPage`
+            -   For displaying a loading spinner
+            -   We'll see an example of when it's useful to distinguish between `isFetching` and `isFetchingNextPage`
+
+-   ### React Infinite Scroller
+    -   This is a separate npm package that does NOT work on React 17+
+    -   Works really nice with `useInfiniteQuery`
+        -   https://www.npmjs.com/package/react-infinite-scroller
+    -   Populate two props for `InfiniteScroll` component:
+        -   `loadMore={fetchNextPage}`
+        -   `hasMore={hasNextPage}`
+    -   `React-Infinite-Scroller` component takes care of detecting when to load more
+    -   Data in `data.pages[...].results`
