@@ -45,9 +45,77 @@ Code to support the Udemy course [React Query: Server State Management in React]
         -   sometimes this is described as a query's **"dependency array"**
 
 -   ### Pagination w/ React Query
+
     -   Track current page in component state (`currentPage`)
     -   Use query keys that include the page number `["posts", currentPage]`
     -   **const { data } = useQuery( [ "posts", currentPage ] , ( ) => fetchPosts2( currentPage ) );**
     -   User clicks "next page" or "previous page" button
         -   update `currentPage` state
         -   fire off new react query to load appropriate blog results
+
+-   ### Prefetching
+
+    -   adds data to the cache
+    -   data is automatically stale, but this is configurable
+    -   shows while re-fetching as long as the cache hasn't expired
+    -   Prefetching can be used for any anticipated data needs, not just pagination
+    -   https://react-query.tanstack.com/reference/QueryClient#queryclientprefetchquery
+
+        -   prefetching is done with a hooke `useQueryClient`
+
+                        // prefetching
+                        const queryClient = useQueryClient();
+
+                        useEffect( ( ) => {
+                            if ( currentPage < maxPostPage ) {
+                                const nextPage = currentPage + 1;
+                                queryClient.prefetchQuery( [ "posts", nextPage ], ( ) =>
+                                    fetchPosts2( nextPage )
+                                );
+                            }
+                        }, [ currentPage, queryClient ] );
+
+-   ### Mutations
+
+    -   Mutation - making a network call that changes data on the server
+        -   jsonplaceholder API doesnt change the data
+    -   **Day Spa app** will demonstrate showing changes to user:
+        -   Optimistic updates (assume change will happen, rollback if it doesnt work)
+        -   Update React Query cache with data returned from the server
+        -   Trigger re-fetch of relevant data by _invalidating_ the current query
+    -   `useMutation`
+
+        -   similar to useQuery, but:
+
+            -   returns a `mutate` function
+            -   doesnt need a query key
+            -   `isLoading` but no `isFetching`
+            -   by default, no retries (configurable)
+            -   https://react-query.tanstack.com/guides/mutations
+
+                    File: PostDetail.jsx
+
+                    ...
+                    // full update of item uses 'put'
+                    // partial update of item uses 'patch'
+                    const updatePost2 = async ( postId ) => {
+                        try {
+                            const response = await axios.patch(
+                                `https://jsonplaceholder.typicode.com/postId/${ postId }`,
+                                { title: "REACT QUERY FOREVER!!!!" }
+                            );
+                        } catch (error) {
+                            console.log(error.message);
+                        }
+                    };
+                    ...
+                    ...
+                    // update post mutation
+                    const updateMutation = useMutation( ( postId ) => updatePost2( postId ) );
+                    ...
+                    ...
+                    render
+                    ...
+                    <button onClick={( ) => updateMutation.mutate( post.id ) }>
+                        Update title
+                    </button>

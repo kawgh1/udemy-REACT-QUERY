@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 // react query
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import { PostDetail } from "./PostDetail";
 const maxPostPage = 10;
@@ -28,6 +28,18 @@ export function Posts() {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedPost, setSelectedPost] = useState(null);
 
+    // prefetching
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (currentPage < maxPostPage) {
+            const nextPage = currentPage + 1;
+            queryClient.prefetchQuery(["posts", nextPage], () =>
+                fetchPosts2(nextPage)
+            );
+        }
+    }, [currentPage, queryClient]);
+
     // replace with useQuery
     // const data = [];
     // useQuery takes a user supplied key name, "posts", and an async function that returns the data as a promise
@@ -41,6 +53,7 @@ export function Posts() {
         () => fetchPosts2(currentPage),
         {
             staleTime: 2000,
+            keepPreviousData: true,
         }
     );
     if (isLoading) return <h3>Loading...</h3>;
