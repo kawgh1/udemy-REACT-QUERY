@@ -170,6 +170,7 @@ Code to support the Udemy course [React Query: Server State Management in React]
             -   We'll see an example of when it's useful to distinguish between `isFetching` and `isFetchingNextPage`
 
 -   ### React Infinite Scroller
+
     -   This is a separate npm package that does NOT work on React 17+
     -   Works really nice with `useInfiniteQuery`
         -   https://www.npmjs.com/package/react-infinite-scroller
@@ -178,3 +179,45 @@ Code to support the Udemy course [React Query: Server State Management in React]
         -   `hasMore={hasNextPage}`
     -   `React-Infinite-Scroller` component takes care of detecting when to load more
     -   Data in `data.pages[...].results`
+
+            File: InfinitePeople.jsx
+            ...
+
+            const initialUrl = "https://swapi.dev/api/people/";
+
+            const fetchUrl2 = async (url) => {
+                const response = await axios.get(url);
+                return response.data;
+            };
+
+            export function InfinitePeople() {
+                // TODO: get data for InfiniteScroll via React Query
+
+                const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+                    "sw-people",
+                    ({ pageParam = initialUrl }) => fetchUrl2(pageParam),
+                    {
+                        getNextPageParam: (lastPage) => lastPage.next || undefined,
+                    }
+                );
+
+                return (
+                    <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+                        {data.pages.map((pageData) => {
+
+                            {  /* pageData.results is an array of person characteristics */  }
+
+                            return pageData.results.map((person) => {
+                                return (
+                                    <Person
+                                        key={person.name}
+                                        name={person.name}
+                                        hairColor={person.hair_color}
+                                        eyeColor={person.eye_color}
+                                    />
+                                );
+                            });
+                        })}
+                    </InfiniteScroll>
+                );
+            }
