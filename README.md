@@ -223,3 +223,10 @@ Code to support the Udemy course [React Query: Server State Management in React]
                     </InfiniteScroll>
                 );
             }
+
+-   ### Bi-directional Scrolling
+
+    -   If you expect your user will land in the middle of your data you can implement bi-directional scrolling
+    -   When user scrolls up or to the left, React Query fetches previous data from the API
+    -   When user scrolls down or to the right, React Query fetches next data from API
+    -   All `next` methods and properties have equivalent for `previous` and can be implemented the same way
